@@ -17,8 +17,11 @@ int main() {
 	int n = 3;
 	PrintMatrix(mat, 3, 4);
 	cout << endl << endl;
+	int nieoznacz = reduceToDiagonal(mat, 3, 4);
+	reduceToUnit(mat, 3, 4);
+	cout << nieoznacz << endl;
 
-	reduceToDiagonal(mat, 3, 4);
+	
 	//reduceToUnit(mat, 3, 4);
 	//for (int i = 0; i < n; i++) {
 
@@ -55,7 +58,7 @@ int main() {
 	//		}
 	//	}
 	//}
-	//PrintMatrix(mat, 3, 4);
+	PrintMatrix(mat, 3, 4);
 
 	system("pause");
 	return 0;
