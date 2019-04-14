@@ -23,13 +23,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Helpers.hpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClInclude>
     <ClInclude Include="Matrix.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="config.hpp">
+    <ClInclude Include="cxxopts.hpp">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>

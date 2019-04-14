@@ -163,8 +163,7 @@
     <ClCompile Include="Matrix.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="config.hpp" />
-    <ClInclude Include="Helpers.hpp" />
+    <ClInclude Include="cxxopts.hpp" />
     <ClInclude Include="Matrix.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
