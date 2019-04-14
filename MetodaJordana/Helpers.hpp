@@ -7,19 +7,12 @@
 #include <vector>
 #include <cstring>
 
-#include "config.h"
+//#include "config.h"
 
 using namespace std;
 
 
-void PrintMatrix(double matrix[][4], int M, int N) {
-	for (int i = 0; i < M; i++) {
-		for (int j = 0; j < N; j++) {
-			std::cout << std::setw(15) << matrix[i][j];
-		}
-		std::cout << std::endl;
-	}
-}
+
 
 void PrintMatrix(double ** matrix, int M, int N) {
 	for (int i = 0; i < M; i++) {
