@@ -5,8 +5,6 @@
 
 #include "cxxopts.hpp"
 
-//#include "Helpers.hpp"
-#include "config.hpp"
 #include "Matrix.h"
 
 using namespace std;

@@ -9,7 +9,6 @@
 #include <conio.h>
 
 #include "Matrix.h"
-#include "config.hpp"
  
 
 
