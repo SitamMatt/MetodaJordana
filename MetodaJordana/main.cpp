@@ -33,21 +33,29 @@ int main(int argc, char **argv) {
 			pietraszko.debug();
 		}
 		if (options.count("file")) {
+			string path = options["file"].as<string>();
 			if (options.count("r") && options.count("c")) {
 				r = options["r"].as<int>();
 				c = options["c"].as<int>();
-				if (c == (r + 1)) {
-					cout << "bledny wymiar tablicy" << endl;
+				if (!(c == (r + 1))) {
+					cout << "Bledny wymiar tablicy." << endl;
+					cout << "Próba odczytu rozmiarów z pliku..." << endl;
+					bool result = pietraszko.readFromFile(path);
+					if (!result) {
+						cerr << "Nie mo¿na odczytaæ wymiarów macierzy." << endl;
+						exit(2);
+					}
+					pietraszko.prepared = true;
 				}
-				string path = options["file"].as<string>();
 				cout << "Reading from " << path << "..." << endl;
 				pietraszko.readFromFile(path, r, c);
+				pietraszko.prepared = true;
 			}
 			else {
-				cout << "Musisz podaæ parametry `r` oraz `c` wraz z argumentami" << endl;
-				exit(2);
+				bool result = pietraszko.readFromFile(path);
+				if (!result) exit(2);
+				pietraszko.prepared = true;
 			}
-			
 		}
 		if (options.count("interactive")) {
 			if (!(options.count("r") && options.count("c"))) {
@@ -70,23 +78,28 @@ int main(int argc, char **argv) {
 			system(plik.c_str());
 			cout << endl;
 			system("pause");
-			fstream dane;
-			dane.open("macierze.txt");
 
 			if (!(options.count("r") && options.count("c"))) {
-				dane >> r;
-				dane >> c;
+				bool result = pietraszko.readFromFile("macierze.txt");
+				if (!result) exit(2);
+				pietraszko.prepared = true;
 			}
 			if (c == (r + 1))
 			{
-				pietraszko.readFromFile(dane, r, c);
+				pietraszko.readFromFile("macierze.txt", r, c);
+				pietraszko.prepared = true;
 			}
 			else
 			{
-				cout << "bledny wymiar tablicy" << endl;
+				cout << "Bledny wymiar tablicy." << endl;
+				cout << "Próba odczytu rozmiarów z pliku..." << endl;
+				bool result = pietraszko.readFromFile("macierze.txt");
+				if (!result) {
+					cerr << "Nie mo¿na odczytaæ wymiarów macierzy." << endl;
+					exit(2);
+				}
+				pietraszko.prepared = true;
 			}
-			dane.close();
-
 		}
 	}
 	catch (const cxxopts::OptionException& e)
@@ -95,22 +108,29 @@ int main(int argc, char **argv) {
 		exit(1);
 	}
 
+
 	// obliczanie rozwiazan
-	pietraszko.print();
-	pietraszko.orderRows();
-	cout << "Po uporzadkowaniu: " << endl;
-	pietraszko.print();
-	int info = pietraszko.reduceToDiagonal();
-	if (info>0) {
-		cout << "Uklad jest nieoznaczony... " << endl;
-	}
-	else if (info < 0) {
-		cout << "Uklad jest sprzeczny... " << endl;
+	if (pietraszko.prepared) {
+
+		pietraszko.print();
+		pietraszko.orderRows();
+		cout << "Po uporzadkowaniu: " << endl;
+		pietraszko.print();
+		int info = pietraszko.reduceToDiagonal();
+		if (info > 0) {
+			cout << "Uklad jest nieoznaczony... " << endl;
+		}
+		else if (info < 0) {
+			cout << "Uklad jest sprzeczny... " << endl;
+		}
+		else {
+			pietraszko.reduceToUnit();
+			cout << "Macierz wynikowa: " << endl;
+			pietraszko.print();
+		}
 	}
 	else {
-		pietraszko.reduceToUnit();
-		cout << "Macierz wynikowa: " << endl;
-		pietraszko.print();
+		cout << options_parser.help();
 	}
 
 	system("pause");

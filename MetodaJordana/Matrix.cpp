@@ -8,13 +8,19 @@
 #include <cstring>
 #include <conio.h>
 
+#include "decimal.h"
+
 #include "Matrix.h"
  
 
-
+using namespace dec;
 using namespace std;
-
-
+//using liczba = decimal<12>;
+using liczba = double;
+liczba zero() {
+	//return decimal_cast<12>(0);
+	return 0.0;
+}
 Matrix::Matrix()
 {
 }
@@ -28,7 +34,7 @@ void Matrix::print()
 {
 	for (int i = 0; i < rows; i++) {
 		for (int j = 0; j < cols; j++) {
-			std::cout << std::setw(15) << data[i][j];
+			std::cout << setw(4) << data[i][j]/*.getAsDouble()*/ << " ";
 		}
 		std::cout << std::endl;
 	}
@@ -58,7 +64,7 @@ void Matrix::orderRows()
 	{
 		for (int j = ordered; j < rows; j++)
 		{
-			if (data[j][i] != 0) {
+			if (data[j][i] != zero()) {
 				swapRows(j, ordered);
 				ordered++;
 			}
@@ -68,7 +74,7 @@ void Matrix::orderRows()
 
 void Matrix::swapRows(int index1, int index2)
 {
-	double *temp = data[index1];
+	liczba *temp = data[index1];
 	data[index1] = data[index2];
 	data[index2] = temp;
 }
@@ -85,7 +91,7 @@ void Matrix::stopDebugging()
 
 void Matrix::readFromFile(string path, int r, int c)
 {
-	data = new double *[r];
+	data = new liczba *[r];
 	int x, y;
 	ifstream in(path);
 
@@ -97,7 +103,7 @@ void Matrix::readFromFile(string path, int r, int c)
 	cols = c;
 
 	for (y = 0; y < r; y++) {
-		data[y] = new double[c];
+		data[y] = new liczba[c];
 		for (x = 0; x < c; x++) {
 			in >> data[y][x];
 		}
@@ -108,18 +114,44 @@ void Matrix::readFromFile(string path, int r, int c)
 
 void Matrix::readFromFile(istream & file, int r, int c)
 {
-	data = new double *[r];
+	data = new liczba *[r];
 	int x, y;
 
 	rows = r;
 	cols = c;
 
 	for (y = 0; y < r; y++) {
-		data[y] = new double[c];
+		data[y] = new liczba[c];
 		for (x = 0; x < c; x++) {
 			file >> data[y][x];
 		}
 	}
+}
+
+bool Matrix::readFromFile(string path)
+{
+	ifstream in(path);
+	in >> rows;
+	in >> cols;
+	if (!(cols == (rows + 1))) {
+		cout << "bledny wymiar tablicy" << endl;
+		return false;
+	}
+	data = new liczba *[rows];
+	int x, y;
+
+	if (!in) {
+		cout << "Cannot open file.\n";
+	}
+
+	for (y = 0; y < rows; y++) {
+		data[y] = new liczba[cols];
+		for (x = 0; x < cols; x++) {
+			in >> data[y][x];
+		}
+	}
+	in.close();
+	return true;
 }
 
 int Matrix::reduceToDiagonal()
@@ -128,7 +160,7 @@ int Matrix::reduceToDiagonal()
 	bool conflict = false;
 	for (int i = 0; i < rows; i++)
 	{
-		if (data[i][i] == 0)
+		if (data[i][i] == zero())
 		{
 			for (int o = 0; o < cols; o++)
 			{
@@ -141,8 +173,8 @@ int Matrix::reduceToDiagonal()
 			for (int k = 0; k < rows; k++)
 			{
 				if (k != i) {
-
-					double multiplier = data[k][i] / data[i][i];
+					
+					liczba multiplier = data[k][i] / data[i][i];
 
 					for (int j = 0; j < cols; j++)
 					{
@@ -158,7 +190,7 @@ int Matrix::reduceToDiagonal()
 						}
 						
 						data[k][j] -= data[i][j] * multiplier;
-						data[k][j] = abs(data[k][j]);
+						//data[k][j] = abs(data[k][j]);
 					}
 				}
 			}
@@ -172,9 +204,9 @@ void Matrix::reduceToUnit()
 {
 	for (int i = 0; i < rows; i++)
 	{
-		double divider = data[i][i];
+		liczba divider = data[i][i];
 
-		if (divider != 0)
+		if (divider != zero())
 		{
 			for (int j = 0; j < cols; j++)
 			{
@@ -192,7 +224,7 @@ void Matrix::reduceToUnit()
 	}
 }
 
-double *& Matrix::operator[](const int index)
+liczba *& Matrix::operator[](const int index)
 {
 	return data[index];
 }

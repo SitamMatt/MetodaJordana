@@ -1,7 +1,11 @@
 #pragma once
 #include <string>
+#include "decimal.h"
 
+using namespace dec;
 using namespace std;
+//using liczba = decimal<12>;
+using liczba = double;
 
 
 class Matrix
@@ -9,9 +13,11 @@ class Matrix
 private:
 	int cols;
 	int rows;
-	double ** data;
+	liczba ** data;
 	bool debuggerFlag = false;
 public:
+	bool prepared = false;
+
 	Matrix();
 	Matrix(string path, int r, int c);
 	void print();
@@ -22,9 +28,10 @@ public:
 	void stopDebugging();
 	void readFromFile(string path, int r, int c);
 	void readFromFile(istream &file, int r, int c);
+	bool readFromFile(string path);
 	int reduceToDiagonal();
 	void reduceToUnit();
-	double*& operator[] (const int index);
+	liczba *& operator[] (const int index);
 
 
 	~Matrix();
