@@ -84,14 +84,14 @@ int main(int argc, char **argv) {
 				if (!result) exit(2);
 				pietraszko.prepared = true;
 			}
-			if (c == (r + 1))
+			else if (c == (r + 1))
 			{
 				pietraszko.readFromFile("macierze.txt", r, c);
 				pietraszko.prepared = true;
 			}
 			else
 			{
-				cout << "Bledny wymiar tablicy." << endl;
+				//cout << "Bledny wymiar tablicy." << endl;
 				cout << "Próba odczytu rozmiarów z pliku..." << endl;
 				bool result = pietraszko.readFromFile("macierze.txt");
 				if (!result) {
@@ -117,11 +117,15 @@ int main(int argc, char **argv) {
 		cout << "Po uporzadkowaniu: " << endl;
 		pietraszko.print();
 		int info = pietraszko.reduceToDiagonal();
-		if (info > 0) {
-			cout << "Uklad jest nieoznaczony... " << endl;
-		}
-		else if (info < 0) {
-			cout << "Uklad jest sprzeczny... " << endl;
+		if (info) {
+			bool inder = pietraszko.checkIndeterminacy();
+			if (inder) {
+				cout << "Uklad jest nieoznaczony... " << endl;
+				pietraszko.print();
+			}
+			else {
+				cout << "Uklad jest sprzeczny... " << endl;
+			}
 		}
 		else {
 			pietraszko.reduceToUnit();

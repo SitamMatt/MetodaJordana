@@ -4,8 +4,8 @@
 
 using namespace dec;
 using namespace std;
-//using liczba = decimal<12>;
-using liczba = double;
+//using liczba = decimal<20>;
+using liczba = long double;
 
 
 class Matrix
@@ -24,6 +24,7 @@ public:
 	void printMarked(int x, int y, string msg);
 	void orderRows();
 	void swapRows(int index1, int index2);
+	bool checkIndeterminacy();
 	void debug();
 	void stopDebugging();
 	void readFromFile(string path, int r, int c);

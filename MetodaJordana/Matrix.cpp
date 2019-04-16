@@ -15,10 +15,10 @@
 
 using namespace dec;
 using namespace std;
-//using liczba = decimal<12>;
-using liczba = double;
+//using liczba = decimal<20>;
+using liczba = long double;
 liczba zero() {
-	//return decimal_cast<12>(0);
+	//return decimal_cast<20>(0);
 	return 0.0;
 }
 Matrix::Matrix()
@@ -34,7 +34,8 @@ void Matrix::print()
 {
 	for (int i = 0; i < rows; i++) {
 		for (int j = 0; j < cols; j++) {
-			std::cout << setw(4) << data[i][j]/*.getAsDouble()*/ << " ";
+			liczba number = abs(data[i][j]) < 0.000000000001 ? abs(data[i][j]) : data[i][j];
+			std::cout << setw(7) << setprecision(4) << fixed << number/*.getAsDouble()*/ << " ";
 		}
 		std::cout << std::endl;
 	}
@@ -77,6 +78,25 @@ void Matrix::swapRows(int index1, int index2)
 	liczba *temp = data[index1];
 	data[index1] = data[index2];
 	data[index2] = temp;
+}
+
+bool Matrix::checkIndeterminacy()
+{
+	liczba suma;
+	bool flag = false;
+
+	for (int i = 0; i < rows; i++)
+	{
+		suma = 0;
+		int j = 0;
+		for (; j < rows; j++)
+		{
+			suma += data[i][j];
+		}
+		if (suma == data[i][j])
+			flag = true;
+	}
+	return flag;
 }
 
 void Matrix::debug()
@@ -156,48 +176,53 @@ bool Matrix::readFromFile(string path)
 
 int Matrix::reduceToDiagonal()
 {
-	int br = 0;
-	bool conflict = false;
+	int c;
+	int flag = false;
+	int m = 0;
+	liczba multiplier = 0;
 	for (int i = 0; i < rows; i++)
 	{
-		if (data[i][i] == zero())
+		if (abs(data[i][i]) < 0.0000000001)
 		{
-			for (int o = 0; o < cols; o++)
-			{
-				if (data[o] != 0) conflict = true;
+			c = 1;
+			while ((i + c) < rows && abs(data[i + c][i]) < 0.0000000001)
+				c++;
+			if ((i + c) == rows) {
+				flag = 1;
+				break;
 			}
-			br++;
-		}
-		else
-		{
-			for (int k = 0; k < rows; k++)
+			for (int j=1,k=0;k<=rows;k++)
 			{
-				if (k != i) {
-					
-					liczba multiplier = data[k][i] / data[i][i];
+				liczba temp = data[j][k];
+				data[j][k] = data[j + c][k];
+				data[j + c][k] = temp;
+			}
+		}
+		for (int j=0;j<rows;j++)
+		{
+			if (i != j) {
 
-					for (int j = 0; j < cols; j++)
-					{
-						if (debuggerFlag) {
-							system("cls");
-							ostringstream msg;
-							msg << "-" << setprecision(0) << data[i][j] * multiplier;
-							printMarked(k, j, msg.str());
-							cout << "multiplier: " << multiplier << endl;
-							cout << "first: " << data[i][i] << endl;
-							cout << "multiplied: " << data[i][j] * multiplier << endl;
-							_getch();
-						}
-						
-						data[k][j] -= data[i][j] * multiplier;
-						//data[k][j] = abs(data[k][j]);
+				multiplier = data[j][i] / data[i][i];
+
+				for (int k = 0; k <= rows; k++)
+				{
+					if (debuggerFlag) {
+						system("cls");
+						ostringstream msg;
+						msg << "-" << setprecision(0) << data[i][k] * multiplier;
+						printMarked(k, j, msg.str());
+						cout << "multiplier: " << multiplier << endl;
+						cout << "first: " << data[i][i] << endl;
+						cout << "multiplied: " << data[i][k] * multiplier << endl;
+						_getch();
 					}
+
+					data[j][k] -= data[i][k] * multiplier;
 				}
 			}
 		}
 	}
-	if (conflict) return -1;
-	return br;
+	return flag;
 }
 
 void Matrix::reduceToUnit()
@@ -205,23 +230,29 @@ void Matrix::reduceToUnit()
 	for (int i = 0; i < rows; i++)
 	{
 		liczba divider = data[i][i];
-
-		if (divider != zero())
-		{
-			for (int j = 0; j < cols; j++)
-			{
-				if (debuggerFlag) {
-					system("cls");
-					ostringstream msg;
-					msg << "\\" << setprecision(0) << divider;
-					printMarked(i, j, msg.str());
-					cout << "divider: " << divider << endl;
-					_getch();
-				}
-				data[i][j] /= divider;
-			}
+		if (debuggerFlag) {
+			system("cls");
+			ostringstream msg;
+			msg << "\\" << setprecision(0) << divider;
+			printMarked(i, rows, msg.str());
+			cout << "divider: " << divider << endl;
+			_getch();
 		}
+		data[i][rows] /= divider;
+		if (debuggerFlag) {
+			system("cls");
+			ostringstream msg;
+			msg << "\\" << setprecision(0) << divider;
+			printMarked(i, i, msg.str());
+			cout << "divider: " << divider << endl;
+			_getch();
+		}
+		data[i][i] /= divider;
 	}
+		
+
+		
+		
 }
 
 liczba *& Matrix::operator[](const int index)
